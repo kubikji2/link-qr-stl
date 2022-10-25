@@ -51,5 +51,3 @@ module qr_piece(qr_arr, is_qr)
     }
     
 }
-
-qr_piece(qr_arr=test_arr,is_qr=false);
