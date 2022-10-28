@@ -28,12 +28,13 @@ module qr_code(arr, is_qr, size=[1,1,1], off=0.01, r=5)
 
 module qr_piece(qr_arr, is_qr)
 {
-    _px_a = 1.5;
-    _h = _px_a;
-    _r = 5*_px_a;
+    _px_a = 1.2;
+    _px_h = 0.3;
+    _h = 1.1;
+    _r = 5;
     _x = _px_a*len(qr_arr) + 2*_r;
     _y = _px_a*len(qr_arr[0])+ 2*_r;
-    _size = [_px_a,_px_a, _h + (is_qr ? 0 : qpp_eps)];
+    _size = [_px_a,_px_a, _px_h + (is_qr ? 0 : qpp_eps)];
 
     if(is_qr)
     {
@@ -44,7 +45,7 @@ module qr_piece(qr_arr, is_qr)
     {  
         difference()
         {
-            qpp_cylindrocube([_x,_y,2*_h,_r]);
+            qpp_cylindrocube([_x,_y,_h+_px_h,_r]);
             translate([_r,_r,_h])
                 qr_code(arr = qr_arr, size=_size, is_qr = is_qr);
         }
