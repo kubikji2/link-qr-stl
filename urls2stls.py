@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from click import argument
 import url2qr
 import os, sys
 import argparse
@@ -16,7 +17,14 @@ def load_urls(urls_file_path):
         print("ERROR: '{}' is not path to readable file".format(urls_file_path),file=sys.stderr)
     return urls
 
-def process_url(url):
+def process_url(url, px_a=None, px_t=None, bs_t=None, qr_o=None):
+
+    # Oh great Python, please forgive me this mess:
+    openscad_param_names = ['px_a', 'px_t', 'bs_t', 'qr_o']
+    openscad_params = [px_a, px_t, bs_t, qr_o]
+    l = len(openscad_params)
+    additional_params_str = " ".join(["-D {}={}".format(openscad_param_names[i],openscad_params[i]) for i in range(l) if not openscad_params[i] is None])
+    print(additional_params_str)
     # composing a filename base
     # '-> in case of string, the space are replaced by underscrolls
     fn_base = url.split("/")[-1].replace(" ", "_")
@@ -34,7 +42,7 @@ def process_url(url):
     os.system("cp {} qrs/qr.scad-qr".format(qp_arr_path))
 
     # creating command-template
-    scad_cmd = "openscad -o stls/{}-{}.stl qr2stl-wrapper.scad -D is_qr={}".format(fn_base,"{}","{}")
+    scad_cmd = "openscad -o stls/{}-{}.stl qr2stl-wrapper.scad -D is_qr={} {}".format(fn_base,"{}","{}", additional_params_str)
     
     # exporting the base part (white)
     cur_cmd = scad_cmd.format("base-white","false")
@@ -56,10 +64,14 @@ if __name__=="__main__":
     # adding file_path
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-p','--path2urls',  help="path to file with new-line-separated urls or strings.")
-    group.add_argument('-u', '--url', help= "url or a string to be converted")
+    group.add_argument('-u', '--url', help= "url or a string to be converted.")
     
-    # OpenSCAD arguments
-    # TODO add those
+    # OpenSCAD model arguments
+    parser.add_argument('-px_a', '--pixel_size', help="size of the QR-code pixels in mm.", type=float)
+    parser.add_argument('-px_t', '--pixel_thickness', help="thickness of the QR-code (pixels) in mm.", type=float)
+    parser.add_argument('-bs_t', '--base_thickness', help="total thickness of the model in mm (including the `px_t`).", type=float)
+    parser.add_argument('-qr_o', '--qr_code_offset', help="QR code offset (~ base corner radius) in mm.", type=float)
+    parser.add_argument('-lh', '--layer_height', help="layer height presets in mm, overrides `ps_t` and `bs_t`", choices=['0.2', '0.3'])
 
     # handle the parse error   
     try:
@@ -68,11 +80,18 @@ if __name__=="__main__":
         if err.code == 2:
             print("'-> For more info see: {} -h.".format(__file__),file=sys.stderr)
         sys.exit(-1)
-       
+    
+    # managing layer height present
+    if not args.layer_height is None:
+        if args.base_thickness or args.pixel_thickness:
+            print("WARNING: `layer_height` present overrides `pixel_thickness` and `base_thickness`.",file=sys.stderr)
+        args.pixel_thickness = float(args.layer_height)
+        args.base_thickness = 0.2 + 0.6 + float(args.layer_height)
+
     # unify the strings to be converted
     urls = load_urls(args.path2urls) if args.url is None else [args.url]
     for url in urls:
-        process_url(url)
+        process_url(url, px_a=args.pixel_size, px_t=args.pixel_thickness, bs_t=args.base_thickness, qr_o=args.qr_code_offset)
     
     """
     # testing on Rick Roll
