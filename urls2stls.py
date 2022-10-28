@@ -16,25 +16,35 @@ def process_url(url):
     fn_base = url.split("/")[-2]
     fn_path = "./qrs/qr-{}.scad-qr".format(fn_base)
     var_name = "qr_arr"
-    print("Processing file: {}".format(fn_base))
-    url2qr.process_url_to_file(url, var_name, fn_path)
 
+    # processing from url to qr-code file
+    print("Processing file: {}".format(fn_base))
+    url2qr.process_url_to_file(url, fn_path, var_name)
+
+    # copy the qr-code openscad file to the file included by the main openscad-file
     os.system("cp {} qrs/qr.scad-qr".format(fn_path))
+
+    # creating command to execute
     scad_cmd = "openscad -o stls/{}-{}.stl qr2stls.scad -D is_qr={}".format(fn_base,"{}","{}")
     
-    # first part
-    cur_cmd = scad_cmd.format("false","false")
+    # base part
+    cur_cmd = scad_cmd.format("base","false")
     print("EXECUTING: {}".format(cur_cmd))
     os.system(cur_cmd)
     
-    # second part
-    cur_cmd = scad_cmd.format("true","true")
+    # qr-code part
+    cur_cmd = scad_cmd.format("qr-code","true")
     print("EXECUTING: {}".format(cur_cmd))
     os.system(cur_cmd)
     
 if __name__=="__main__":
 
+    
     FN = "urls/urls.txt"
     
     for url in load_urls(FN):
         process_url(url)
+
+    # testing on Rick Roll
+    #URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ/'
+    #process_url(URL)
