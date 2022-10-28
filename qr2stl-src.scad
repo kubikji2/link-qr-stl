@@ -1,6 +1,6 @@
 include <qpp-openscad-library/qpp_all.scad>
 
-module qr_code(arr, is_qr, size=[1,1,1], off=0.01, r=5)
+module qr_code(arr, is_qr, size=[1,1,1], off=0.01)
 {
     x_size = len(arr);
     y_size = len(arr[0]);
@@ -25,27 +25,23 @@ module qr_code(arr, is_qr, size=[1,1,1], off=0.01, r=5)
     
 }
 
-module qr_piece(qr_arr, is_qr)
+module qr_piece(qr_arr, is_qr, px_a=1.2, px_h=0.3, bs_h=1.1, bs_r=5)
 {
-    _px_a = 1.2;
-    _px_h = 0.3;
-    _h = 1.1;
-    _r = 5;
-    _x = _px_a*len(qr_arr) + 2*_r;
-    _y = _px_a*len(qr_arr[0])+ 2*_r;
-    _size = [_px_a,_px_a, _px_h + (is_qr ? 0 : qpp_eps)];
+    _x = px_a*len(qr_arr) + 2*bs_r;
+    _y = px_a*len(qr_arr[0])+ 2*bs_r;
+    _size = [px_a, px_a, px_h + (is_qr ? 0 : qpp_eps)];
 
     if(is_qr)
     {
-        translate([_r,_r,_h])
-            qr_code(arr = qr_arr, size=_size, is_qr = is_qr);
+        translate([bs_r, bs_r, bs_h])
+            qr_code(arr = qr_arr, size=_size, is_qr = is_qr, off=qpp_eps);
     }
     else
     {  
         difference()
         {
-            qpp_cylindrocube([_x,_y,_h+_px_h,_r]);
-            translate([_r,_r,_h])
+            qpp_cylindrocube([_x, _y, bs_h+px_h,bs_r]);
+            translate([bs_r, bs_r, bs_h])
                 qr_code(arr = qr_arr, size=_size, is_qr = is_qr);
         }
     }
