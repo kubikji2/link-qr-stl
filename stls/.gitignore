@@ -1,2 +1,4 @@
-# ignoring all stls
+# ignoring all stl files
 *.stl
+# ignore all 3mf files
+*.3mf
