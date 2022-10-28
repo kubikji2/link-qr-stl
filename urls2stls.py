@@ -1,19 +1,17 @@
 import url2qr
 import os
 
-# load urls
-def load_urls(urls_file):
-    short_urls = []
-    with open(urls_file,'r') as f:
+# load urls from the 'urls_file_path'
+def load_urls(urls_file_path):
+    urls = []
+    with open(urls_file_path,'r') as f:
         for line in f.readlines():
-            entries = line.strip().split("/")
-            entries.pop(-2)
-            new_url = "/".join(entries)
-            short_urls.append(new_url)
-    return short_urls
+            new_url = line.strip().strip("/")
+            urls.append(new_url)
+    return urls
 
 def process_url(url):
-    fn_base = url.split("/")[-2]
+    fn_base = url.split("/")[-1]
     fn_path = "./qrs/qr-{}.scad-qr".format(fn_base)
     var_name = "qr_arr"
 
@@ -25,7 +23,7 @@ def process_url(url):
     os.system("cp {} qrs/qr.scad-qr".format(fn_path))
 
     # creating command to execute
-    scad_cmd = "openscad -o stls/{}-{}.stl qr2stls.scad -D is_qr={}".format(fn_base,"{}","{}")
+    scad_cmd = "openscad -o stls/{}-{}.stl qr2stl-wrapper.scad -D is_qr={}".format(fn_base,"{}","{}")
     
     # base part
     cur_cmd = scad_cmd.format("base","false")
@@ -39,12 +37,14 @@ def process_url(url):
     
 if __name__=="__main__":
 
-    
+    #"""
     FN = "urls/urls.txt"
-    
+    FN = "urls/urls-test.txt"
     for url in load_urls(FN):
         process_url(url)
-
+    #"""
+    """
     # testing on Rick Roll
-    #URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ/'
-    #process_url(URL)
+    URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ/'
+    process_url(URL)
+    """
