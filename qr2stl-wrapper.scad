@@ -3,6 +3,9 @@ include <qrs/qr.scad-qr>
 // use modules from the qr2stl scad
 use <qr2stl-src.scad>
 
+// number of fragments used to approximate the circle
+$fn=90;
+
 // create variables with default value, so it can be change from the terminal
 // see: https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Using_OpenSCAD_in_a_command_line_environment
 is_qr = false;  // -> is qr code (true) or base (false)
