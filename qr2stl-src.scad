@@ -1,4 +1,3 @@
-include <qrs/test.scad-qr>
 include <qpp-openscad-library/qpp_all.scad>
 
 module qr_code(arr, is_qr, size=[1,1,1], off=0.01, r=5)
