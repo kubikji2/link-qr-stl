@@ -1,3 +1,3 @@
-#!/bin/bashs
+#!/bin/bash
 
 git submodule update --remote 
