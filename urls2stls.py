@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from click import argument
 import url2qr
 import os, sys
 import argparse
