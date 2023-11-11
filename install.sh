@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # init git submodules
-./init-submodule.sh
+./init-submodules.sh
 
 # pip-install required modules
 pip install -r requirements.txt
