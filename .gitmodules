@@ -7,3 +7,6 @@
 	path = ubuntu-essentials-install
 	url = https://github.com/kubikji2/ubuntu-essentials-install.git
 	branch = master
+[submodule "solidpp"]
+	path = solidpp
+	url = https://github.com/kubikji2/solidpp
